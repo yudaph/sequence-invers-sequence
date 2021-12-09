@@ -1,37 +1,9 @@
 package search
 
-func MaxValueSequenceAndSequenceInvers(x []int) (max *int) {
-	sequence := map[int][]int{}
-	sequenceIndex := -1
-	boolBefore := false
-	sequenceInvers := map[int][]int{}
-	sequenceInversIndex := -1
-	boolBeforeInvers := false
+func MaxValueSequenceAndSequenceInvers(slice []int) (max *int) {
 
-	// search sequence and sequence invers
-	for i, v := range x[1:] {
-		// if sequence
-		if v-1 == x[i] {
-			if !boolBefore {
-				sequenceIndex++
-				boolBefore = true
-			}
-			sequence[sequenceIndex] = append(sequence[sequenceIndex], v)
-		} else {
-			boolBefore = false
-		}
-
-		// if sequence invers
-		if v == x[i]-1 {
-			if !boolBeforeInvers {
-				sequenceInversIndex++
-				boolBeforeInvers = true
-			}
-			sequenceInvers[sequenceInversIndex] = append(sequenceInvers[sequenceInversIndex], x[i])
-		} else {
-			boolBeforeInvers = false
-		}
-	}
+	//get sequence and sequence invers
+	sequence, sequenceInvers := getSequenceAndSequenceInvers(slice)
 
 	// check all sequence and sequence invers is palindrome
 	for _, seq := range sequence {
@@ -48,13 +20,45 @@ func MaxValueSequenceAndSequenceInvers(x []int) (max *int) {
 	return max
 }
 
-func isPalindrome(x, y []int) bool {
-	if len(x) != len(y) {
+func getSequenceAndSequenceInvers(slice []int) (sequence, sequenceInvers map[int][]int) {
+	sequence, sequenceInvers = map[int][]int{}, map[int][]int{}
+	sequenceIndex, sequenceInversIndex := -1, -1
+	isSequenceBefore, isSequenceInversBefore := false, false
+
+	// search sequence and sequence invers
+	for index, currentValue := range slice[1:] {
+		// if sequence
+		if currentValue-1 == slice[index] {
+			if !isSequenceBefore {
+				sequenceIndex++
+				isSequenceBefore = true
+			}
+			sequence[sequenceIndex] = append(sequence[sequenceIndex], currentValue)
+		} else {
+			isSequenceBefore = false
+		}
+
+		// if sequence invers
+		if currentValue == slice[index]-1 {
+			if !isSequenceInversBefore {
+				sequenceInversIndex++
+				isSequenceInversBefore = true
+			}
+			sequenceInvers[sequenceInversIndex] = append(sequenceInvers[sequenceInversIndex], slice[index])
+		} else {
+			isSequenceInversBefore = false
+		}
+	}
+	return sequence, sequenceInvers
+}
+
+func isPalindrome(sequence, sequenceInvers []int) bool {
+	if len(sequence) != len(sequenceInvers) {
 		return false
 	}
-	yIndex := len(y) - 1
-	for i := range x {
-		if x[i] != y[yIndex-i] {
+	sequenceInversLength := len(sequenceInvers) - 1
+	for sequenceIndex := range sequence {
+		if sequence[sequenceIndex] != sequenceInvers[sequenceInversLength-sequenceIndex] {
 			return false
 		}
 	}
